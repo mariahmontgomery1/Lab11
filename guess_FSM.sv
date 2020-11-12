@@ -43,12 +43,12 @@ module guess_FSM #(parameter N=21)(
    reg [N-1:0] counter, counter_next;
    
    // state memory (register)
-   always_ff @(posedge(clk), posedge(en), posedge(rst))
+   always_ff @(posedge(clk), posedge(rst))
       if (rst) begin
          state   <= s0;
          counter <= {N{1'b1}};
       end
-      else begin
+      else if(en) begin
          state   <= state_next;
          counter <= counter_next;
       end
@@ -84,7 +84,7 @@ module guess_FSM #(parameter N=21)(
             
             s3: begin
                  if(B == 4'b0000)
-                    state_next = s1;
+                    state_next = s0;
                  else if (B == 4'b1000)
                     state_next = swin;
                  else 
@@ -98,24 +98,34 @@ module guess_FSM #(parameter N=21)(
                     state_next = swin;
             end
             
-            swin: begin
+            slose: begin
                  if(B == 4'b0000)
                     state_next = s0;
                  else 
                     state_next = slose;
             end   
          endcase 
+ 
 
-         always @*
+         always @* begin
+            win = 0;
+            lose = 0;
+         
                case(state)
                     s0: y = 4'b0001;
                     s1: y = 4'b0010;
                     s2: y = 4'b0100;
                     s3: y = 4'b1000;
-                    swin: win = 1;
-                    slose: lose = 1;
+                    swin: begin
+                          win = 1;
+                          y = 4'b1111;
+                          end
+                    slose: begin
+                        lose = 1;
+                        y = 4'b0000;
+                        end
                 endcase 
-                    
+          end
                     
                     
 endmodule

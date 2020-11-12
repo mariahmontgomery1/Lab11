@@ -29,6 +29,7 @@ module guess_FSM_test();
     reg [3:0] y_t;
     reg win_t;
     reg lose_t;
+    integer i;
     
     guess_FSM #(.N(21)) dut(
         .B(B_t),
@@ -43,17 +44,53 @@ module guess_FSM_test();
     always begin 
         clk = ~clk; #5;
     end 
-    
     initial begin   
-        clk = 0; en_t = 0; rst_t = 0; B_t = 4'b0001; #10; 
-        rst_t = 1; #3;
-        B_t = 4'b0010; en_t = 1; rst_t = 0; #10;
-        rst_t = 1; #3;
-        B_t = 4'b1110; rst_t = 0; #10;
-        rst_t = 1; #3;
-        en_t = 0; #5;
-        en_t = 1; #3;
-        B_t = 4'h1000; #10;
+        clk = 0; rst_t = 1; en_t = 0; B_t = 4'b0000; #10;
+        rst_t = 0; #20;
+        en_t = 1; #60;
+        
+        for (i = 0; i <= 4'b1111; i = i + 1) begin 
+            B_t = 4'b0000;
+            #60;
+            B_t = i;
+            #10;
+        end 
+        
+        B_t = 4'b0000;
+        en_t = 0; #50;
+        en_t = 1; #60;
+        rst_t = 1; #10;
+        rst_t = 0;
+        for (i = 0; i <= 4'b1111; i = i + 1) begin 
+            B_t = 4'b0000;
+            #50;
+            B_t = i;
+            #10;
+        end 
+        
+         B_t = 4'b0000;
+        en_t = 0; #50;
+        en_t = 1; #60;
+        rst_t = 1; #10;
+        rst_t = 0;
+        for (i = 0; i <= 4'b1111; i = i + 1) begin 
+            B_t = 4'b0000;
+            #70;
+            B_t = i;
+            #10;
+        end 
+        
+         B_t = 4'b0000;
+        en_t = 0; #50;
+        en_t = 1; #60;
+        rst_t = 1; #10;
+        rst_t = 0;
+        for (i = 0; i <= 4'b1111; i = i + 1) begin 
+            B_t = 4'b0000;
+            #80;
+            B_t = i;
+            #10;
+        end 
         $finish;
     end 
 
