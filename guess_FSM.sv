@@ -25,25 +25,25 @@ module guess_FSM #(parameter N=21)(
     input en,
     input clk,
     input rst,
-    output [3:0] y,
-    output win,
-    output lose
+    output reg [3:0] y,
+    output reg win,
+    output reg lose
     );
     
-    localparam [1:0]
+    localparam[2:0]
       s0    = 3'b000,
       s1    = 3'b001,
-      s2    = 3'b010,
-      s3    = 3'b011,
+      s2   = 3'b010,
+      s3   = 3'b011,
       slose = 3'b100,
       swin  = 3'b101;
       
-      // internal signals
-   reg [1:0] state, state_next;
+   // internal signals
+   reg [2:0] state, state_next;
    reg [N-1:0] counter, counter_next;
    
    // state memory (register)
-   always_ff @(posedge clk or posedge rst)
+   always_ff @(posedge(clk), posedge(en), posedge(rst))
       if (rst) begin
          state   <= s0;
          counter <= {N{1'b1}};
@@ -53,5 +53,69 @@ module guess_FSM #(parameter N=21)(
          counter <= counter_next;
       end
       
-      
+      always @*
+        case(state)
+            s0: begin
+                 if(B == 4'b0000)
+                    state_next = s1;
+                 else if (B == 4'b0001)
+                    state_next = swin;
+                 else 
+                    state_next = slose;
+            end 
+            
+            s1: begin
+                 if(B == 4'b0000)
+                    state_next = s2;
+                 else if (B == 4'b0010)
+                    state_next = swin;
+                 else 
+                    state_next = slose;
+            end 
+            
+            s2: begin
+                 if(B == 4'b0000)
+                    state_next = s3;
+                 else if (B == 4'b0100)
+                    state_next = swin;
+                 else 
+                    state_next = slose;
+            end
+            
+            s3: begin
+                 if(B == 4'b0000)
+                    state_next = s1;
+                 else if (B == 4'b1000)
+                    state_next = swin;
+                 else 
+                    state_next = slose;
+            end
+            
+            swin: begin
+                 if(B == 4'b0000)
+                    state_next = s0;
+                 else 
+                    state_next = swin;
+            end
+            
+            swin: begin
+                 if(B == 4'b0000)
+                    state_next = s0;
+                 else 
+                    state_next = slose;
+            end   
+         endcase 
+
+         always @*
+               case(state)
+                    s0: y = 4'b0001;
+                    s1: y = 4'b0010;
+                    s2: y = 4'b0100;
+                    s3: y = 4'b1000;
+                    swin: win = 1;
+                    slose: lose = 1;
+                endcase 
+                    
+                    
+                    
 endmodule
