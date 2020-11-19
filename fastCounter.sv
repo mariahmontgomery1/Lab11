@@ -26,7 +26,7 @@ module fastCounter(
     output count
     );
     
-    counter #(.N(4)) counterFast(
+    counter #(.N(26)) counterFast(
         .clk(clk),
         .rst(rst),
         .MSBs(count)

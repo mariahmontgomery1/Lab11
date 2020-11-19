@@ -8,7 +8,7 @@ module guessing_game(
     input [15:0] sw,
     output [6:0] seg,
     output [3:0] an,
-    output [15:0] led
+    output reg [15:0] led
     );
     
     wire db1_out;
@@ -22,7 +22,7 @@ module guessing_game(
     wire fastCounter_count;
     wire slowCounter_count;
     wire mux2_out;
-    wire guess_FSM_y;
+    wire [3:0] guess_FSM_y;
     wire guess_FSM_win;
     wire guess_FSM_lose;
     
@@ -88,4 +88,12 @@ module guessing_game(
         .lose(guess_FSM_lose)
     );
     
+    y_decoder guess_y_decoder(
+        .in(guess_FSM_y),
+        .out(seg)
+    );
+    
+    assign an = 4'b1110;
+    
+             
  endmodule 
